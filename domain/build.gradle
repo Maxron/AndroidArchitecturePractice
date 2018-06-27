@@ -1,7 +1,24 @@
 apply plugin: 'java-library'
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // RxJava2
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
 }
 
 sourceCompatibility = "1.7"

@@ -36,6 +36,7 @@ ext {
     // App dependencies
     supportLibraryVersion = '27.1.1'
     supportConstraintLayoutVersion = '1.1.2'
+    rxJavaVersion = '2.1.16'
 
     // Test dependencies
     junitVersion = '4.12'
