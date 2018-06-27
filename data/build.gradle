@@ -31,4 +31,13 @@ dependencies {
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+
+    // RxJava, RxAndroid, Retrofit2
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroidVersion"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit2Version"
+
+    //Gson
+    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
+
 }
