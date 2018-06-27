@@ -1,9 +1,9 @@
 package com.maxron.domain.model;
 
 public class RepoInfo {
-    public String name;
+    public final String name;
 
-    public RepoInfo(String name) {
+    public RepoInfo(final String name) {
         this.name = name;
     }
 }
