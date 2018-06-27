@@ -7,13 +7,21 @@ import org.junit.Test;
 
 public class RepoInfoTest {
 
+    private RepoInfo repoInfo;
+
     @Before
     public void setUp() throws Exception {
+        repoInfo = new RepoInfo(RepoInfoTestData.ID, RepoInfoTestData.NAME);
     }
 
     @Test
     public void testRepoInfo() {
-        RepoInfo repoInfo = new RepoInfo(RepoInfoTestData.NAME);
         Assert.assertEquals(RepoInfoTestData.NAME, repoInfo.name);
+        Assert.assertEquals(RepoInfoTestData.ID, repoInfo.id);
+        Assert.assertEquals(makeRepoInfoString(RepoInfoTestData.ID, RepoInfoTestData.NAME), repoInfo.toString());
+    }
+
+    private String makeRepoInfoString(long id, String name) {
+        return String.format("RepoInfo{name='%s', id=%d}", name, id);
     }
 }
