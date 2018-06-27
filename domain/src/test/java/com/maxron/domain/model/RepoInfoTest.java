@@ -13,7 +13,7 @@ public class RepoInfoTest {
 
     @Test
     public void testRepoInfo() {
-        RepoInfo repoInfo = new RepoInfo();
+        RepoInfo repoInfo = new RepoInfo(RepoInfoTestData.NAME);
         Assert.assertEquals(RepoInfoTestData.NAME, repoInfo.name);
     }
 }
