@@ -1,11 +1,14 @@
 package com.maxron.domain.interactor;
 
 import com.maxron.domain.interactor.type.SingleUseCaseWithParameter;
+import com.maxron.domain.model.RepoInfo;
 import com.maxron.domain.repository.UserRepository;
+
+import java.util.List;
 
 import io.reactivex.Single;
 
-public class ListUserRepositoriesUseCase implements SingleUseCaseWithParameter {
+public class ListUserRepositoriesUseCase implements SingleUseCaseWithParameter<String, List<RepoInfo>> {
 
     private final UserRepository repository;
 
@@ -14,7 +17,7 @@ public class ListUserRepositoriesUseCase implements SingleUseCaseWithParameter {
     }
 
     @Override
-    public Single execute(Object parameter) {
+    public Single<List<RepoInfo>> execute(String user) {
         return null;
     }
 }

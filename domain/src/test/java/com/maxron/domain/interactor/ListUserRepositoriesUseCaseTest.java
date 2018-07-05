@@ -5,27 +5,43 @@ import com.maxron.domain.repository.UserRepository;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.subscribers.TestSubscriber;
+import io.reactivex.Single;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ListUserRepositoriesUseCaseTest {
 
-    private UserRepository repository;
+    @Mock UserRepository repository;
     private ListUserRepositoriesUseCase listUserRepositoriesUseCase;
-    private TestSubscriber<List<RepoInfo>> testSubscriber;
+    private String username;
 
     @Before
     public void setUp() throws Exception {
-        repository = Mockito.mock(UserRepository.class);
+        MockitoAnnotations.initMocks(this);
         listUserRepositoriesUseCase = new ListUserRepositoriesUseCase(repository);
-        testSubscriber = new TestSubscriber<>();
+        username = "alex";
     }
 
     @Test
-    public void shouldListUserRepositoriesByUser() {
+    public void testShouldListUserRepositoryByUserName() {
+        List<RepoInfo> resultRepos = new ArrayList<>(1);
+        resultRepos.add(new RepoInfo(1234L, "firstRepo"));
 
+        when(repository.listUserRepository(username))
+                .thenReturn(Single.just(resultRepos));
+
+        listUserRepositoriesUseCase.execute(username)
+                .test()
+                .assertValue(resultRepos)
+                .assertComplete();
+
+        verify(repository).listUserRepository(username);
     }
 }
