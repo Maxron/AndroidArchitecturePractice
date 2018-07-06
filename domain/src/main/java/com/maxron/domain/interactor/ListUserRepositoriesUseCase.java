@@ -18,6 +18,6 @@ public class ListUserRepositoriesUseCase implements SingleUseCaseWithParameter<S
 
     @Override
     public Single<List<RepoInfo>> execute(String user) {
-        return null;
+        return repository.listUserRepository(user);
     }
 }
