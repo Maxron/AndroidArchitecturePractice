@@ -11,16 +11,22 @@ import android.widget.Button;
 import com.maxron.data.remote.GitHubServiceApi;
 import com.maxron.data.remote.model.Repo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,31 +45,61 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.button)
     public void onSend(View view) {
         Log.d(TAG, "onSend: ");
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
+                .client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
 
         GitHubServiceApi service = retrofit.create(GitHubServiceApi.class);
-
-        final Call<List<Repo>> repos = service.listRepo("maxron");
-        repos.enqueue(new Callback<List<Repo>>() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
-                Log.d(TAG, "onResponse: ");
-                response.body().forEach(new Consumer<Repo>() {
+        String user = "maxron";
+        service.listRepo(user)
+                .map(new Function<List<Repo>, List<RepoSimple>>() {
                     @Override
-                    public void accept(Repo repo) {
-                        Log.d(TAG, "accept: repo: " + repo.getName());
+                    public List<RepoSimple> apply(List<Repo> repos) throws Exception {
+                        List<RepoSimple> newRepos = new ArrayList<>();
+
+                        for (Repo repo : repos) {
+                            RepoSimple simple = new RepoSimple(repo.getName());
+                            newRepos.add(simple);
+                        }
+
+                        return newRepos;
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<RepoSimple>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: ");
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onSuccess(List<RepoSimple> repoSimples) {
+                        Log.d(TAG, "onSuccess: ");
+                        repoSimples.forEach(new Consumer<RepoSimple>() {
+                            @Override
+                            public void accept(RepoSimple repoSimple) {
+                                Log.d(TAG, "accept: repo name:" + repoSimple.getName());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
                     }
                 });
-            }
 
-            @Override
-            public void onFailure(Call<List<Repo>> call, Throwable t) {
-                Log.d(TAG, "onFailure: ");
-            }
-        });
     }
 }

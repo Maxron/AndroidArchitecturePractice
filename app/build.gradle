@@ -34,9 +34,13 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroidVersion"
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit2Version"
-    implementation "com.squareup.retrofit2:adapter-rxjava:$rootProject.retrofit2Version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofit2Version"
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofit2Version"
     implementation "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpVersion"
+    implementation group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.2'
+
+
     implementation project(':data')
 
     //Gson
