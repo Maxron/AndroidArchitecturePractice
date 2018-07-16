@@ -1,6 +1,8 @@
 package com.maxron.androidarchitecturepractice.data;
 
+import com.maxron.androidarchitecturepractice.data.mapper.RepoModelMapper;
 import com.maxron.androidarchitecturepractice.data.remote.GithubServiceApi;
+import com.maxron.androidarchitecturepractice.data.remote.model.RepoDetail;
 import com.maxron.domain.model.RepoInfo;
 
 import org.junit.Before;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.verify;
 public class UserRepositoryImplTest {
 
     @Mock GithubServiceApi githubService;
+    @Mock RepoModelMapper mapper;
     @InjectMocks UserRepositoryImpl userRepository;
     private String user;
 
@@ -32,18 +35,29 @@ public class UserRepositoryImplTest {
 
     @Test
     public void testShouldlistUserRepository() {
-        List<RepoInfo> response = new ArrayList<>();
+        RepoDetail mRepoDetail = new RepoDetail();
+        List<RepoDetail> response = new ArrayList<>();
+        response.add(mRepoDetail);
+
+        String repoName = "javaSample";
+        Long repoId = 1234L;
+        RepoInfo mRepoInfo = new RepoInfo(repoId, repoName);
+        List<RepoInfo> repos = new ArrayList<>();
+        repos.add(mRepoInfo);
 
         // Given
+        given(mapper.repodetailToRepoInfo(mRepoDetail)).willReturn(mRepoInfo);
         given(githubService.listUserRepository(user)).willReturn(Single.just(response));
 
         // When
         userRepository.listUserRepository(user)
                 .test()
-                .assertValue(response)  // Then
-                .assertComplete();      // Then
+                .assertComplete();
 
         // Then
+        // Verify githubService has called.
         verify(githubService).listUserRepository(user);
+        // Verify mapper has called.
+        verify(mapper).repodetailToRepoInfo(mRepoDetail);
     }
 }

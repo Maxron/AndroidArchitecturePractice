@@ -37,6 +37,11 @@ ext {
     supportLibraryVersion = '27.1.1'
     supportConstraintLayoutVersion = '1.1.2'
     rxJavaVersion = '2.1.16'
+    rxAndroidVersion = '2.0.2'
+    retrofit2Version = '2.4.0'
+    okhttpVersion = '3.10.0'
+    gsonVersion = '2.8.5'
+
 
     // Test dependencies
     junitVersion = '4.12'

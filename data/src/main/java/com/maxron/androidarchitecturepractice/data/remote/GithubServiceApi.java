@@ -1,11 +1,15 @@
 package com.maxron.androidarchitecturepractice.data.remote;
 
-import com.maxron.domain.model.RepoInfo;
+import com.maxron.androidarchitecturepractice.data.remote.model.RepoDetail;
 
 import java.util.List;
 
 import io.reactivex.Single;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface GithubServiceApi {
-    Single<List<RepoInfo>> listUserRepository(String user);
+
+    @GET("users/{user}/repos")
+    Single<List<RepoDetail>> listUserRepository(@Path("user") String user);
 }
