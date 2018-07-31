@@ -42,6 +42,7 @@ ext {
     okhttpVersion = '3.10.0'
     gsonVersion = '2.8.5'
     butterknife = '8.8.1'
+    lifecycleVersion = '1.1.1'
 
 
     // Test dependencies

@@ -26,6 +26,8 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$rootProject.supportConstraintLayoutVersion"
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$lifecycleVersion"
 
     // ButterKnife
     implementation "com.jakewharton:butterknife:$rootProject.butterknife"
@@ -45,5 +47,6 @@ dependencies {
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
 
 }
