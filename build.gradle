@@ -43,6 +43,7 @@ ext {
     gsonVersion = '2.8.5'
     butterknife = '8.8.1'
     lifecycleVersion = '1.1.1'
+    roomVersion = '1.1.1'
 
 
     // Test dependencies
