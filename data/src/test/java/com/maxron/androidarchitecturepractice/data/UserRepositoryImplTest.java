@@ -1,5 +1,7 @@
 package com.maxron.androidarchitecturepractice.data;
 
+import com.maxron.androidarchitecturepractice.data.local.RepoDao;
+import com.maxron.androidarchitecturepractice.data.local.entity.RepoModel;
 import com.maxron.androidarchitecturepractice.data.mapper.RepoDetailTestData;
 import com.maxron.androidarchitecturepractice.data.mapper.RepoModelMapper;
 import com.maxron.androidarchitecturepractice.data.mapper.RepoModelMapperImpl;
@@ -30,29 +32,38 @@ public class UserRepositoryImplTest {
 
     @Mock GithubServiceApi githubService;
     @Mock RepoModelMapper mapper;
+    @Mock RepoDao repoDao;
     @InjectMocks UserRepositoryImpl userRepository;
-    private String user;
+    private String user = "user";
+    private long repoId = 1234L;
+    private String repoName = "SimpleRepoName";
 
     @Before
     public void setUp() throws Exception {
-        user = "user";
+    }
+
+    private RepoInfo getRepoInfoStub() {
+        return new RepoInfo(repoId, repoName);
+    }
+
+    private RepoDetail getDummyRepoDetail() {
+        return new RepoDetail();
     }
 
     @Test
     public void testShouldlistUserRepository() {
-        RepoDetail dummyRepoDetail = new RepoDetail();
-        List<RepoDetail> response = new ArrayList<>();
-        response.add(dummyRepoDetail);
+        List<RepoModel> dummyRepoModels = new ArrayList<>();
 
-        String repoName = "javaSample";
-        Long repoId = 1234L;
-        RepoInfo dummyRepoInfo = new RepoInfo(repoId, repoName);
-        List<RepoInfo> repos = new ArrayList<>();
-        repos.add(dummyRepoInfo);
+        RepoDetail dummyRepoDetail = getDummyRepoDetail();
+        List<RepoDetail> dummyRepoDetails = new ArrayList<>();
+        dummyRepoDetails.add(dummyRepoDetail);
+
+        RepoInfo repoInfoStub = getRepoInfoStub();
 
         // Given
-        given(mapper.repodetailToRepoInfo(dummyRepoDetail)).willReturn(dummyRepoInfo);
-        given(githubService.listUserRepository(user)).willReturn(Single.just(response));
+        given(repoDao.getAllRepos()).willReturn(dummyRepoModels);
+        given(mapper.repodetailToRepoInfo(dummyRepoDetail)).willReturn(repoInfoStub);
+        given(githubService.listUserRepository(user)).willReturn(Single.just(dummyRepoDetails));
 
         // When
         userRepository.listUserRepository(user)
@@ -69,14 +80,17 @@ public class UserRepositoryImplTest {
     @Test
     public void testShouldlistUserRepositoryWithRealMapper() {
         mapper = new RepoModelMapperImpl();
-        userRepository = new UserRepositoryImpl(githubService, mapper);
+        userRepository = new UserRepositoryImpl(githubService, mapper, repoDao);
 
-        final RepoDetail repoDetail = new RepoDetailTestData().stub();
-        List<RepoDetail> response = new ArrayList<>();
-        response.add(repoDetail);
+        List<RepoModel> emptyRepoModels = new ArrayList<>(0);
+
+        final RepoDetail repoDetailStub = new RepoDetailTestData().stub();
+        List<RepoDetail> repoDetailsStub = new ArrayList<>();
+        repoDetailsStub.add(repoDetailStub);
 
         // Given
-        given(githubService.listUserRepository(user)).willReturn(Single.just(response));
+        given(repoDao.getAllRepos()).willReturn(emptyRepoModels); // Will fetch from Api when local is empty
+        given(githubService.listUserRepository(user)).willReturn(Single.just(repoDetailsStub));
 
         // When
         userRepository.listUserRepository(user)
@@ -86,11 +100,11 @@ public class UserRepositoryImplTest {
                     public boolean test(List<RepoInfo> repoInfos) throws Exception {
 
                         // Then
-                        assertEquals(repoDetail.getId(), repoInfos.get(0).id.intValue());
-                        assertEquals(repoDetail.getName(), repoInfos.get(0).name);
+                        assertEquals(repoDetailStub.getId(), repoInfos.get(0).id.intValue());
+                        assertEquals(repoDetailStub.getName(), repoInfos.get(0).name);
 
-                        return repoInfos.get(0).id.intValue() == repoDetail.getId() &&
-                                repoInfos.get(0).name.equals(repoDetail.getName());
+                        return repoInfos.get(0).id.intValue() == repoDetailStub.getId() &&
+                                repoInfos.get(0).name.equals(repoDetailStub.getName());
                     }
                 })
                 .assertComplete();
